@@ -9,7 +9,14 @@ const set = require("lodash/set");
 const get = require("lodash/get");
 const uid = require("cuid");
 
-const { offEvent, onEvent, getEvent, emitEvent } = require("./eventEmitter.js");
+const em = new (require("@evodev/eventemitter"));
+const emitEvent = em.emit.bind(em);
+const getEvent = em.get.bind(em);
+const offEvent = em.off.bind(em);
+const onEvent = (n,c,o) => {
+  if (o) return em.once.bind(em)(n,c);
+  else return em.on.bind(em)(n,c);
+};
 
 let data = {"accounts": []};
 
@@ -25,14 +32,13 @@ function save() {
 class Server {
   constructor() {
     this.io = require("socket.io")(...arguments);
-	this.events = {};
     this.io.on("connection", socket => {
       socket.once("auth", acc => {
         for (let i = 0; i < data.accounts.length; i++) {
           let account = data.accounts[i];
           if (account.username === acc.username) {
             if (account.password !== acc.password) return socket.emit("res.auth", 403);
-            let cbs = getEvent.bind(this)("connecting");
+            let cbs = getEvent("connecting");
 			if (cbs) {
 			  for (let i = 0; i < cbs.length; i++) {
 			    let r = cbs[i].callback({ account: acc, socket: socket });
@@ -62,7 +68,7 @@ class Server {
               } catch(err) {}
               socket.emit(`res.get.${d.id}`, r);
             });
-			emitEvent.bind(this)("connection", { socket: socket, account: acc });
+			emitEvent("connection", { socket: socket, account: acc });
             return socket.emit("res.auth", 100);
           }
         }
@@ -73,7 +79,7 @@ class Server {
           let account = data.accounts[i];
           if (account.username === acc.username) return socket.emit("res.register", 402);
         }
-		let cbs = getEvent.bind(this)("registering");
+		let cbs = getEvent("registering");
 		if (cbs) {
 		  for (let i = 0; i < cbs.length; i++) {
 		    let r = cbs[i].callback({ account: acc, socket: socket });
@@ -89,20 +95,19 @@ class Server {
           database: {}
         });
         save();
-		emitEvent.bind(this)("register", { account: acc, socket: socket });
+		emitEvent("register", { account: acc, socket: socket });
         return socket.emit("res.register", 101);
       });
     });
   }
   on(name, callback) {
-    let id = uid();
-	onEvent.bind(this)(name, callback, false, id);
-	return id;
+	return onEvent(name, callback, false);
   }
   once(name, callback) {
-	let id = uid();
-	onEvent.bind(this)(name, callback, true , id);
-	return id;
+	return onEvent(name, callback, true);
+  }
+  off(id) {
+	return offEvent(id);
   }
 }
 

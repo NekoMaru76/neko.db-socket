@@ -1,6 +1,6 @@
 {
   "name": "@evodev/neko.db-socket",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A package that make online database with socket.io",
   "main": "index.js",
   "scripts": {
@@ -17,9 +17,22 @@
   "author": "nekomaru76",
   "license": "ISC",
   "dependencies": {
+    "@evodev/eventemitter": "^1.0.4",
     "cuid": "^2.1.8",
     "lodash": "^4.17.20",
     "socket.io": "^2.3.0",
     "socket.io-client": "^2.3.1"
-  }
+  },
+  "directories": {
+    "test": "test"
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NekoMaru76/neko.db-socket.git"
+  },
+  "bugs": {
+    "url": "https://github.com/NekoMaru76/neko.db-socket/issues"
+  },
+  "homepage": "https://github.com/NekoMaru76/neko.db-socket#readme"
 }

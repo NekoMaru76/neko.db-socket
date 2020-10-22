@@ -6,7 +6,14 @@
 
 let uid = require("cuid");
 
-const { offEvent, onEvent, getEvent, emitEvent } = require("./eventEmitter.js");
+const em = new (require("@evodev/eventemitter"));
+const emitEvent = em.emit.bind(em);
+const getEvent = em.get.bind(em);
+const offEvent = em.off.bind(em);
+const onEvent = (n,c,o) => {
+  if (o) return em.once.bind(em)(n,c);
+  else return em.on.bind(em)(n,c);
+};
 
 class Client {
   constructor(config) {
@@ -29,8 +36,8 @@ class Client {
     this.socket1.once("res.register", (res) => {
       this.socket1.disconnect();
       delete this.socket1;
-      if (res === 101) return emitEvent.bind(this.connection)("registered");
-	  else if (res === 402) return emitEvent.bind(this.connection)("alreadyRegistered");
+      if (res === 101) return emitEvent("registered");
+	  else if (res === 402) return emitEvent("alreadyRegistered");
 	  else if (typeof res === "object") if (res.error === 407) throw new Error(res.reason);
     });
     this.socket1.emit("register", this.connection.account);
@@ -42,26 +49,22 @@ class Client {
       this.socket.once("res.auth", (res) => {
         if (res < 500 && res > 399 && typeof res !== "object") throw new Error(translate(res));
 		else if (typeof res === "object") if (res.error === 407) throw new Error(res.reason);
-        emitEvent.bind(this.connection)("connected");
+        emitEvent("connected");
 		this.socket.once("disconnect", () => {
-		  emitEvent.bind(this.connection)("disconnected");
+		  emitEvent("disconnected");
 		});
       });
       this.socket.emit("auth", this.connection.account);
     }).bind(this));
   }
   on(name, callback) {
-	let id = uid();
-    onEvent.bind(this.connection)(name, callback, false, id);
-	return id;
+	return onEvent(name, callback, false);
   }
   once(name, callback) {
-	let id = uid();
-    onEvent.bind(this.connection)(name, callback, true , id);
-	return id;
+	return onEvent(name, callback, true);
   }
   off(id) {
-	offEvent.bind(this.connection)(id);
+	return offEvent(id);
   }
   set(name, value, callback) {
     if (!this.socket) throw new Error("Try to connect first!");
