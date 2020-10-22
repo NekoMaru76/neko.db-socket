@@ -1,0 +1,11 @@
+All Client Events:
+- registered        - It will fire this event if the account is successfully registered.
+- alreadyRegistered - It will fire this event it the account is already registered.
+- connected         - It will fire this event if the client is connected to the server.
+- disconnected      - It will fire this event if the client is disconnected from the server.
+
+All Server Events:
+- register    - It will fire this event if a client successfully to register an account.
+- connection  - It will fire this event if a client is connected with valid account.
+- connecting  - It will fire this event if a client trying to connecting to the server. note: all callbacks must return object { status: false/true, reason: "bla bla"/null }. If a callback return false in the obj's status, the server will close the connection and return obj's reason to the client. If all callbacks' obj's status is true, the server will accept the connection.
+- registering - It will fire this event if a client trying to registering to the server. note: all callbacks must return object { status: false/true, reason: "bla bla"/null }. If a callback return false in the obj's status, the server will close the connection and return obj's reason to the client. If all callbacks' obj's status is true, the server will make the account.

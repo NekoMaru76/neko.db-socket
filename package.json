@@ -1,0 +1,25 @@
+{
+  "name": "@evodev/neko.db-socket",
+  "version": "1.0.0",
+  "description": "A package that make online database with socket.io",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "socket",
+    "socket.io",
+    "db",
+    "database",
+    "online-database",
+    "online-db"
+  ],
+  "author": "nekomaru76",
+  "license": "ISC",
+  "dependencies": {
+    "cuid": "^2.1.8",
+    "lodash": "^4.17.20",
+    "socket.io": "^2.3.0",
+    "socket.io-client": "^2.3.1"
+  }
+}
